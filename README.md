@@ -76,7 +76,7 @@ Příklad vstupu: "I@++O@-O@#"
 
    ---
 
-   ![Example](example.png)
+   ![Example](example.PNG)
 
 ### Vysvětlení kódu
 
