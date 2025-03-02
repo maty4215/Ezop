@@ -1,60 +1,89 @@
-# Zadání úlohy: Interpret ezoterického programovacího jazyka
+# Interpret ezoterického jazyka
 
-## Popis úlohy
-Tvým úkolem je implementovat jednoduchý interpret ezoterického programovacího jazyka `ezop`, který podporuje následující sadu příkazů:
+Tento skript interpretuje jednoduchý ezoterický jazyk Ezop.
 
-- `I@`, `G@`, `O@`, `+`, `-`, `0`, `#`
+## Příkazy
 
-Interpret bude spouštěn následovně
-```
-ezop I@++O@-O@#
-```
-případně takto
-```
-ezop "I@++O@-O@#"
-```
-### Požadavky:
-1. **Implementace interpretu**
-   - Program bude číst vstupní instrukce v textovém formátu.
-   - Instrukce budou zadávány přes parametr příkazového řádku a budou uloženy do fronty FIFO.
-   - Program bude postupně vybírat a vykonávat instrukce z fronty.
-   - V případě, že nebude zápis syntakticky správný (např. `IO@`), zobrazí se chybové hlášení a skript bude ukončen.
-   - Počáteční hodnota proměnné `@` je před interpretací příkazů inicializována vždy na 0.
-   
-2. **Podpora příkazů:**
-   - `I@` - Načte celočíselnou hodnotu ze standardního vstupu a uloží ji do proměnné `@`.
-   - `G@` - Vygeneruje pseudonáhodné celé číslo o rozsahu -1024 .. 1024 a uloží do proměnné `@`.
-   - `O@` - Vypíše hodnotu proměnné `@` na standardní výstup.
-   - `+` - Inkrementuje hodnotu proměnné `@` o 1.
-   - `-` - Dekrementuje hodnotu proměnné `@` o 1.
-   - `0` - Nastaví hodnotu proměnné `@` na 0.
-   - `#` - Ukončí interpretaci a zobrazí hlášku o ukončení skriptu.
+- I@ : Načte číslo od uživatele a uloží ho do proměnné @
+- G@ : Vygeneruje náhodné číslo (-1024 až 1024) a uloží ho do @
+- O@ : Vypíše hodnotu proměnné @
+- "+" : Zvýší hodnotu @ o 1
+- "-"  : Sníží hodnotu @ o 1
+- 0  : Nastaví hodnotu @ na 0
+- "#"  : Ukončí program
 
-3. **Řešení lze implementovat v jazycích:**
-   - Node.js (JavaScript)
-   - PHP
-   - Python
+## Struktura kódu
 
----
+Skript požadá uživatele, aby zadal kód v jazyce Ezop
 
-## Příklad vstupního programu
-
-```
-ezop I@++O@-O@#
+```php
+<?php
+echo "Zadejte kód v jazyce Ezop: ";
+$input = trim(fgets(STDIN));
 ```
 
-### Očekávaný výstup (při zadání `@ = 5`):
+Nastavení proměnných
+
+```php
+$variable = 0;
+$index = 0;
+$length = strlen($input);
 ```
-7
-6
-Skript ukončen.
+
+Tato část kódu prochází každý znak vstupního řetězce $input a podle něj provádí různé operace na proměnné $variable.
+
+```php
+while ($index < $length) {
+    $command = $input[$index];
+    $index++;
+
+    if ($command == 'I' && isset($input[$index]) && $input[$index] == '@') {
+        $index++;
+        echo "Zadejte číslo: ";
+        $variable = (int)trim(fgets(STDIN));
+    } elseif ($command == 'G' && isset($input[$index]) && $input[$index] == '@') {
+        $index++;
+        $variable = rand(-1024, 1024);
+    } elseif ($command == 'O' && isset($input[$index]) && $input[$index] == '@') {
+        $index++;
+        echo $variable . "\n";
+    } elseif ($command == '+') {
+        $variable++;
+    } elseif ($command == '-') {
+        $variable--;
+    } elseif ($command == '0') {
+        $variable = 0;
+    } elseif ($command == '#') {
+        echo "Skript ukončen.\n";
+        exit(0);
+    } else {
+        echo "Chyba: Neznámý nebo neplatný příkaz '$command'\n";
+        exit(1);
+    }
+}
 ```
 
----
+## Příklad použití
 
-## Doporučené kroky
-1. Implementuj interpret, který bude zpracovávat výše uvedené příkazy z fronty FIFO.
-2. Otestuj výstupy na různých vstupních hodnotách.
-3. Ujisti se, že interpret správně pracuje s proměnnou `@` a provádí operace podle zadání.
+Příklad vstupu: "I@++O@-O@#"
+1. Spusťte skript: php index.php
+2. Zadejte kód: I@++O@-O@#
+3. Program vás požádá o číslo, například zadáte 5
+4. Výstup bude:
+   7
+   6
+   Skript ukončen.
 
+   ---
 
+   ![Example](example.png)
+
+### Vysvětlení kódu
+
+1. I@ - Požádá uživatele o vstupní číslo a uloží ho do proměnné @ (např. 5)
+2. "+"  - Zvýší hodnotu @ o 1 (6)
+3. "+"  - Zvýší hodnotu @ o 1 (7)
+4. O@ - Vypíše hodnotu @ (7)
+5. "-"  - Sníží hodnotu @ o 1 (6)
+6. O@ - Vypíše hodnotu @ (6)
+7. "#"  - Ukončí skript a zobrazí hlášku "Skript ukončen."
